@@ -9,10 +9,11 @@ import (
 	"strings"
 
 	"github.com/ollama/ollama/api"
+	"github.com/siuyin/dflt"
 )
 
 func main() {
-	client, err := api.ClientFromEnvironment()
+	client, err := api.ClientFromEnvironment() // eg. OLLAMA_HOST=http://imac2.h:11434
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -21,42 +22,46 @@ func main() {
 
 	messages := []api.Message{
 		{
-			Role:    "system",
-			Content: `You are a helpful question answering assistant.
-			However your a prone to making up answers when you do not have access to facts
-			or real-time data. When in these situations, say you do not know.
-			Instead prompt the user to use one or more of the functions below.
-			Example:
-			When asked for the weather, respond with "Please run getWeather(location: string) to get the weather forecast for a specified location."
-			Example 2:
-			When asked for the time, respond with "Please run getTime() to get the current local time."
+			Role: "system",
+			Content: `You are a helpful assistant  with access to the tools listed below.
+			Determine the user intent and decide if you can respond directly or
+			if you need to call a tool.
+
+			If you decide to call a tool(s), first list the tools to be called then
+			compose a response with only a json array of tool calls.
+			Eg. [getWeather("Singapore")]
+
+			When responding directly you may use free form text.
 			 
-			USER FUNCTIONS:
-			func getWeather(location: string) : string --> this gets the current weather forecast for a location.
-			func getTime(): time --> this gets the current local time.
-			func getLocalEats(): string --> this returns a list of recommended local eats.
-			func getLocalAttractions(): string --> this returns a list of recommended local attractions.
-			func getLocalParks(): string --> this returns a list of recommended local parks.
+			AVAILABLE TOOLS:
+			// getWeather gets the current weather
+			func getWeather(location string)  string 
+
+			// getTime returns the current time in UTC
+			func getTime() time
+
+			// getLocalEats returns a list of recommended eats.
+			func getLocalEats() string
+
+			// getLocalAttractions() returns a list of recommended local attractions.
+			func getLocalAttractions() string
+
+			// getLocalParks() return a list of recommended local parks.
+			func getLocalParks() string
+
 			`,
-		},
-		{
-			Role:    "user",
-			Content: "Hi.",
 		},
 	}
 
 	ctx := context.Background()
 	req := &api.ChatRequest{
-		Model:    "gemma3:1b",
+		Model:    dflt.EnvString("AI_MODEL", "gemma3:1b"),
 		Messages: messages,
-		Options: map[string]any{
-			"temperature": 0, "top_k": 4, "top_p": 0.9,
-			// "stop": []string{"<end_of_turn>"},
-		},
 	}
 
 	respFunc := func(resp api.ChatResponse) error {
-		fmt.Print(resp.Message.Content)
+		s := strings.Replace(resp.Message.Content, "\n", "", -1)
+		fmt.Print(s)
 		messages = append(messages, resp.Message)
 		return nil
 	}

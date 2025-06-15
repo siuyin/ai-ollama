@@ -6,10 +6,11 @@ import (
 	"log"
 
 	"github.com/ollama/ollama/api"
+	"github.com/siuyin/dflt"
 )
 
 func main() {
-	client, err := api.ClientFromEnvironment()
+	client, err := api.ClientFromEnvironment() // eg. OLLAMA_HOST=http://imac2.h:11434
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,7 +36,7 @@ func main() {
 
 	ctx := context.Background()
 	req := &api.ChatRequest{
-		Model:    "gemma3:1b",
+		Model:    dflt.EnvString("AI_MODEL", "gemma3:1b"),
 		Messages: messages,
 		Options: map[string]any{
 			"temperature": 0, "top_k": 5, "top_p": 1,

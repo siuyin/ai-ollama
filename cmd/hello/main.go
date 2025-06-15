@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/ollama/ollama/api"
+	"github.com/siuyin/dflt"
 )
 
 func main() {
@@ -29,19 +30,19 @@ func main() {
 		},
 		{
 			Role:    "user",
-			Content: "which of these is the most dangerous?",
+			Content: "which of these is the most dangerous? Briefly explain in one paragraph.",
 		},
 	}
 
 	ctx := context.Background()
 	req := &api.ChatRequest{
-		Model:    "gemma3:1b",
+		Model:    dflt.EnvString("AI_MODEL", "gemma3:1b"),
 		Messages: messages,
-		Options: map[string]any{
-			"temperature": 0, "top_k": 5, "top_p": 1,
-			"stop": []string{"<end_of_turn>"},
-		},
-	 }
+		// Options: map[string]any{
+		// 	"temperature": 0, "top_k": 5, "top_p": 1,
+		// 	"stop": []string{"<end_of_turn>"},
+		// },
+	}
 
 	respFunc := func(resp api.ChatResponse) error {
 		fmt.Print(resp.Message.Content)
