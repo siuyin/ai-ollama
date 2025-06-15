@@ -1,0 +1,1 @@
+Fake function calling on gemma3:1b works poorly. It works intermittently.
