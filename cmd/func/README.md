@@ -1,10 +1,11 @@
 ## Function calling with Gemma3:4b
 
-Sample prompt with good results:
+Sample prompt with good results with both Gemma3:4b and llama3.2:3b.
+Gemma3:1b missed out the initial call to Bankok time (short context window?):
 
 ```
 You have access to functions. If you decide to invoke any of the function(s),
-you MUST put it in the format of
+you MUST put it in the json format of
 {"name": function name, "parameters": dictionary of argument name and its value}
 
 You SHOULD NOT include any other text in the response if you call a function
@@ -38,3 +39,5 @@ eg.
 OLLAMA_HOST=http://somehost.com:11434 ollama run gemma3:4b
 ```
 Then copy and paste in the above prompt.
+
+
