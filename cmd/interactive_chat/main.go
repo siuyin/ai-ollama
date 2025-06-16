@@ -27,11 +27,10 @@ func main() {
 			Determine the user intent and decide if you can respond directly or
 			if you need to call a tool.
 
-			If you decide to call a tool(s), first list the tools to be called then
-			compose a response with only a json array of tool calls.
-			Eg. [getWeather("Singapore")]
+			If you decide to call a tool(s), first list the tools to be called,
+			then compose a response which includes  a json array of tool calls.
+			Eg. [getWeather("Singapore")] or [getTime(),getWeather("Singapore")]
 
-			When responding directly you may use free form text.
 			 
 			AVAILABLE TOOLS:
 			// getWeather gets the current weather
