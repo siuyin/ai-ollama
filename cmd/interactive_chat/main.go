@@ -19,37 +19,40 @@ func main() {
 	}
 
 	fmt.Println("enter: {exit} to exit")
+	systemPrompt := `You have access to functions. If you decide to invoke any of the function(s),
+you MUST put it in the json format of
+{"name": function name, "parameters": dictionary of argument name and its value}
+
+You SHOULD NOT include any other text in the response if you call a function
+otherwise you may respond in your usual way.
+
+Functions:
+[
+  {
+    "name": "time",
+    "description": "gets the current time for a given timezone",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "timezone": {
+          "type": "string"
+	  "default": "UTC"
+        }
+      }
+    }
+  },
+  {"name":"Weather", "description":"get the weather forecast for a given city",
+       "parameters": {"type":"object", "properties": {"city":{"type":"string}},"required": "city" }
+  },
+  {"name":"LocalEats", "description":"returns a list of recommended eats.", "parameters": null},
+  {"name":"LocalAttractions", "description":"returns a list of recommended attractions.","parameters": null },
+  {"name":"Parks", "description":"returns a list of nearby parks and gardens.", "parameters": null }
+]
+`
 
 	messages := []api.Message{
-		{
-			Role: "system",
-			Content: `You are a helpful assistant  with access to the tools listed below.
-			Determine the user intent and decide if you can respond directly or
-			if you need to call a tool.
-
-			If you decide to call a tool(s), first list the tools to be called,
-			then compose a response which includes  a json array of tool calls.
-			Eg. [getWeather("Singapore")] or [getTime(),getWeather("Singapore")]
-
-			 
-			AVAILABLE TOOLS:
-			// getWeather gets the current weather
-			func getWeather(location string)  string 
-
-			// getTime returns the current time in UTC
-			func getTime() time
-
-			// getLocalEats returns a list of recommended eats.
-			func getLocalEats() string
-
-			// getLocalAttractions() returns a list of recommended local attractions.
-			func getLocalAttractions() string
-
-			// getLocalParks() return a list of recommended local parks.
-			func getLocalParks() string
-
-			`,
-		},
+		{Role: "system", Content: systemPrompt},
+		{Role: "user", Content: "Hi"},
 	}
 
 	ctx := context.Background()
