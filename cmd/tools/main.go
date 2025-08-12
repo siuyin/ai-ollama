@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	model := dflt.EnvString("MODEL", "qwen3:1.7b") // multi-tool intermittent with 0.6b
+	model := dflt.EnvString("MODEL", "qwen3:0.6b")
 	host := dflt.EnvString("OLLAMA_HOST", "http://localhost:11434")
 	log.Printf("MODEL=%s OLLAMA_HOST=%s", model, host)
 
@@ -81,12 +81,12 @@ func main() {
 			return nil
 		}
 
-		for _, tool := range resp.Message.ToolCalls {
-			tc := tool.Function
-			log.Printf("Model wants to call tool: %s with args: %v", tc.Name, tc.Arguments)
-			switch tc.Name {
+		for _, tc := range resp.Message.ToolCalls {
+			fn := tc.Function
+			log.Printf("Model wants to call tool: %s with args: %v", fn.Name, fn.Arguments)
+			switch fn.Name {
 			case "getWeather":
-				loc := tc.Arguments["location"].(string)
+				loc := fn.Arguments["location"].(string)
 				output, err := getWeather(loc)
 				if err != nil {
 					log.Fatalf("error executing tool: %v", err)
@@ -104,7 +104,7 @@ func main() {
 					Content: output,
 				})
 			default:
-				log.Fatalf("invalid function: %q", tc.Name)
+				log.Fatalf("invalid function: %q", fn.Name)
 			}
 		}
 		return nil
