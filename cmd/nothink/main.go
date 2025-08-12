@@ -42,7 +42,7 @@ func main() {
 		Model:    model,
 		Messages: messages,
 		Think:    &api.ThinkValue{Value: false},
-		Options:  map[string]any{"Temperature": 0.0},
+		Options:  map[string]any{"Temperature": 0.0, "Seed": 123},
 	}
 
 	respFunc := func(resp api.ChatResponse) error {
