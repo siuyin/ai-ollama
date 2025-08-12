@@ -12,7 +12,8 @@ import (
 
 func main() {
 	model := dflt.EnvString("MODEL", "qwen3:1.7b") // multi-tool intermittent with 0.6b
-	log.Printf("MODEL=%s", model)
+	host := dflt.EnvString("OLLAMA_HOST", "http://localhost:11434")
+	log.Printf("MODEL=%s OLLAMA_HOST=%s", model, host)
 
 	client := getClient()
 
