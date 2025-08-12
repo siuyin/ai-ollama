@@ -13,16 +13,12 @@ func main() {
 	model := dflt.EnvString("MODEL", "qwen3:0.6b")
 	log.Printf("MODEL=%s", model)
 
-	client, err := api.ClientFromEnvironment()
-	if err != nil {
-		log.Fatal(err)
-	}
+	client := getClient()
 
 	messages := []api.Message{
 		{
 			Role:    "system",
 			Content: "Provide very brief, concise responses",
-			//Content: "You are a friendly and chatty weather bot with access to tools. Use tools as needed.",
 		},
 		{
 			Role:    "user",
@@ -30,7 +26,6 @@ func main() {
 		},
 	}
 
-	ctx := context.Background()
 	req := &api.ChatRequest{
 		Model:    model,
 		Messages: messages,
@@ -87,7 +82,8 @@ func main() {
 		return nil
 	}
 
-	err = client.Chat(ctx, req, respFunc)
+	ctx := context.Background()
+	err := client.Chat(ctx, req, respFunc)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -104,4 +100,13 @@ func main() {
 func getWeather(loc string) (string, error) {
 	log.Printf("Tool: getWeather called with arg: %s", loc)
 	return fmt.Sprintf("It is currently 30°C in %s. Humidity is 80%. Rain is expected later.\n", loc), nil
+}
+
+func getClient() *api.Client {
+	client, err := api.ClientFromEnvironment()
+	if err != nil {
+		log.Fatal("getClient: ", err)
+	}
+
+	return client
 }
