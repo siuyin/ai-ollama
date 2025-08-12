@@ -24,7 +24,7 @@ func main() {
 		},
 		{
 			Role:    "user",
-			Content: "what is the time? Also get me the weather in Bukit Batok, Singapore?",
+			Content: "what is the UTC time? Also get me the weather in Bukit Batok, Singapore?",
 		},
 	}
 	getWeatherTool := api.Tool{
