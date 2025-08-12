@@ -55,10 +55,8 @@ func main() {
 				},
 			},
 		},
-		Options: map[string]any{
-			"temperature": 0,
-		},
-		Think: &api.ThinkValue{Value: false},
+		Options: map[string]any{"Temperature": 0.1},
+		Think:   &api.ThinkValue{Value: false},
 	}
 
 	respFunc := func(resp api.ChatResponse) error {
