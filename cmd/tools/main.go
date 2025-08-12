@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	model := dflt.EnvString("MODEL", "qwen3:0.6b")
+	model := dflt.EnvString("MODEL", "qwen3:1.7b") // multi-tool intermittent with 0.6b
 	log.Printf("MODEL=%s", model)
 
 	client := getClient()
@@ -126,7 +126,7 @@ func main() {
 }
 
 func getWeather(loc string) (string, error) {
-	log.Printf("Tool: getWeather called with arg: %s", loc)
+	log.Printf("\tTool: getWeather called with arg: %s", loc)
 	return fmt.Sprintf("It is currently 30°C in %s. Humidity is 80%. Rain is expected later.\n", loc), nil
 }
 
@@ -140,5 +140,6 @@ func getClient() *api.Client {
 }
 
 func getTime() string {
+	log.Printf("\tTool: getTime called")
 	return time.Now().UTC().Format("15:04:05 UTC")
 }
