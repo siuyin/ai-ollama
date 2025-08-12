@@ -20,7 +20,7 @@ func main() {
 	messages := []api.Message{
 		{
 			Role:    "system",
-			Content: "Provide very brief, concise responses",
+			Content: "Provide very brief, concise responses. Check all necessary tool calls have been made.",
 		},
 		{
 			Role:    "user",
@@ -74,10 +74,8 @@ func main() {
 		Options:  map[string]any{"Temperature": 0.1},
 		Think:    &api.ThinkValue{Value: false},
 	}
-	var res api.ChatResponse
 
 	respFunc := func(resp api.ChatResponse) error {
-		res = resp
 		if len(resp.Message.ToolCalls) == 0 {
 			fmt.Print(resp.Message.Content)
 			return nil
@@ -116,11 +114,6 @@ func main() {
 	err := client.Chat(ctx, req, respFunc)
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	// I'm not sure if this helps. But qwen3:0.6b is still intermitted on a non GPU host.
-	for fin := res.Done; !fin; fin = res.Done {
-		time.Sleep(300 * time.Millisecond) // allow time for model to make another tool call if it wants to
 	}
 
 	req.Messages = messages
