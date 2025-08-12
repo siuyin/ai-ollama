@@ -127,8 +127,9 @@ func main() {
 }
 
 func getWeather(loc string) (string, error) {
-	log.Printf("\tTool: getWeather called with arg: %s", loc)
-	return fmt.Sprintf("It is currently 30°C in %s. Humidity is 80%. Rain is expected later.\n", loc), nil
+	res := fmt.Sprintf("It is currently 30°C in %s. Humidity is 80%%. Rain is expected later.\n", loc)
+	log.Printf("\tTool: getWeather called with arg: %s. resp: %s", loc, res)
+	return res, nil
 }
 
 func getClient() *api.Client {
@@ -141,6 +142,7 @@ func getClient() *api.Client {
 }
 
 func getTime() string {
-	log.Printf("\tTool: getTime called")
-	return time.Now().UTC().Format("15:04:05 UTC")
+	res := time.Now().UTC().Format("15:04:05 UTC")
+	log.Printf("\tTool: getTime called. resp: %s", res)
+	return res
 }
