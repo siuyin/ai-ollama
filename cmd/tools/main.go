@@ -92,6 +92,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	req.Messages = messages
+	err = client.Chat(ctx, req, respFunc)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func getWeather(loc string) (string, error) {
