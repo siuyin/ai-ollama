@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/ollama/ollama/api"
 	"github.com/siuyin/dflt"
@@ -22,36 +23,55 @@ func main() {
 		},
 		{
 			Role:    "user",
-			Content: "what is the weather in Bukit Batok, Singapore?",
+			Content: "what is the time? Also get me the weather in Bukit Batok, Singapore?",
+		},
+	}
+	getWeatherTool := api.Tool{
+		Type: "function",
+		Function: api.ToolFunction{
+			Name:        "getWeather",
+			Description: "Get the weather in a given location",
+			Parameters: struct {
+				Type       string                      `json:"type"`
+				Defs       any                         `json:"$defs,omitempty"`
+				Items      any                         `json:"items,omitempty"`
+				Required   []string                    `json:"required"`
+				Properties map[string]api.ToolProperty `json:"properties"`
+			}{
+				Type:     "object",
+				Required: []string{"location"},
+				Properties: map[string]api.ToolProperty{
+					"location": api.ToolProperty{Type: []string{"string"}},
+				},
+			},
+		},
+	}
+
+	getTimeTool := api.Tool{
+		Type: "function",
+		Function: api.ToolFunction{
+			Name:        "getTime",
+			Description: "Returns the current time.",
+			Parameters: struct {
+				Type       string                      `json:"type"`
+				Defs       any                         `json:"$defs,omitempty"`
+				Items      any                         `json:"items,omitempty"`
+				Required   []string                    `json:"required"`
+				Properties map[string]api.ToolProperty `json:"properties"`
+			}{
+				Type:       "object",
+				Required:   []string{},
+				Properties: map[string]api.ToolProperty{},
+			},
 		},
 	}
 
 	req := &api.ChatRequest{
 		Model:    model,
 		Messages: messages,
-		Tools: []api.Tool{
-			{Type: "function",
-				Function: api.ToolFunction{
-					Name:        "getWeather",
-					Description: "Get the weather in a given location",
-					Parameters: struct {
-						Type       string                      `json:"type"`
-						Defs       any                         `json:"$defs,omitempty"`
-						Items      any                         `json:"items,omitempty"`
-						Required   []string                    `json:"required"`
-						Properties map[string]api.ToolProperty `json:"properties"`
-					}{
-						Type:     "object",
-						Required: []string{"location"},
-						Properties: map[string]api.ToolProperty{
-							"location": api.ToolProperty{Type: []string{"string"}},
-						},
-					},
-				},
-			},
-		},
-		Options: map[string]any{"Temperature": 0.1},
-		Think:   &api.ThinkValue{Value: false},
+		Tools:    []api.Tool{getWeatherTool, getTimeTool},
+		Options:  map[string]any{"Temperature": 0.1},
+		Think:    &api.ThinkValue{Value: false},
 	}
 
 	respFunc := func(resp api.ChatResponse) error {
@@ -60,23 +80,31 @@ func main() {
 			return nil
 		}
 
-		tc := resp.Message.ToolCalls[0].Function
-		log.Printf("Model wants to call tool: %s with args: %v", tc.Name, tc.Arguments)
-		switch tc.Name {
-		case "getWeather":
-			loc := tc.Arguments["location"].(string)
-			output, err := getWeather(loc)
-			if err != nil {
-				log.Fatalf("error executing tool: %v", err)
-			}
+		for _, tool := range resp.Message.ToolCalls {
+			tc := tool.Function
+			log.Printf("Model wants to call tool: %s with args: %v", tc.Name, tc.Arguments)
+			switch tc.Name {
+			case "getWeather":
+				loc := tc.Arguments["location"].(string)
+				output, err := getWeather(loc)
+				if err != nil {
+					log.Fatalf("error executing tool: %v", err)
+				}
 
-			// Add the tool's output to the messages list as a new "tool" role message.
-			messages = append(messages, api.Message{
-				Role:    "tool",
-				Content: output,
-			})
-		default:
-			log.Fatalf("invalid function: %q", tc.Name)
+				// Add the tool's output to the messages list as a new "tool" role message.
+				messages = append(messages, api.Message{
+					Role:    "tool",
+					Content: output,
+				})
+			case "getTime":
+				output := getTime()
+				messages = append(messages, api.Message{
+					Role:    "tool",
+					Content: output,
+				})
+			default:
+				log.Fatalf("invalid function: %q", tc.Name)
+			}
 		}
 
 		return nil
@@ -109,4 +137,8 @@ func getClient() *api.Client {
 	}
 
 	return client
+}
+
+func getTime() string {
+	return time.Now().UTC().Format("15:04:05 UTC")
 }
