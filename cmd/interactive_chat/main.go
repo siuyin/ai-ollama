@@ -23,10 +23,7 @@ func main() {
 you MUST put it in the json format of
 {"name": function name, "parameters": dictionary of argument name and its value}
 
-You SHOULD NOT include any other text in the response if you call a function
-otherwise you may respond in your usual way.
-
-Functions:
+You SHOULD NOT include any other text in the response if you call a function.
 [
   {
     "name": "time",
@@ -48,11 +45,12 @@ Functions:
   {"name":"LocalAttractions", "description":"returns a list of recommended attractions.","parameters": null },
   {"name":"Parks", "description":"returns a list of nearby parks and gardens.", "parameters": null }
 ]
+
+Hi
 `
 
 	messages := []api.Message{
-		{Role: "system", Content: systemPrompt},
-		{Role: "user", Content: "Hi"},
+		{Role: "user", Content: systemPrompt},
 	}
 
 	ctx := context.Background()
