@@ -22,6 +22,7 @@ func main() {
 		{
 			Role:    "system",
 			Content: "Provide very brief, concise responses",
+			//Content: "You are a friendly and chatty weather bot with access to tools. Use tools as needed.",
 		},
 		{
 			Role:    "user",
@@ -98,9 +99,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println()
 }
 
 func getWeather(loc string) (string, error) {
 	log.Printf("Tool: getWeather called with arg: %s", loc)
-	return fmt.Sprintf("The weather in %s is a sunny 30°C\n"), nil
+	return fmt.Sprintf("It is currently 30°C in %s. Humidity is 80%. Rain is expected later.\n", loc), nil
 }
