@@ -65,8 +65,25 @@ func main() {
 			fmt.Print(resp.Message.Content)
 			return nil
 		}
+
 		tc := resp.Message.ToolCalls[0].Function
 		log.Printf("Model wants to call tool: %s with args: %v", tc.Name, tc.Arguments)
+		switch tc.Name {
+		case "getWeather":
+			loc := tc.Arguments["location"].(string)
+			output, err := getWeather(loc)
+			if err != nil {
+				log.Fatalf("error executing tool: %v", err)
+			}
+
+			// Add the tool's output to the messages list as a new "tool" role message.
+			messages = append(messages, api.Message{
+				Role:    "tool",
+				Content: output,
+			})
+		default:
+			log.Fatalf("invalid function: %q", tc.Name)
+		}
 
 		return nil
 	}
@@ -75,4 +92,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func getWeather(loc string) (string, error) {
+	log.Printf("Tool: getWeather called with arg: %s", loc)
+	return fmt.Sprintf("The weather in %s is a sunny 30°C\n"), nil
 }
