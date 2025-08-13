@@ -10,6 +10,14 @@ import (
 	"github.com/siuyin/dflt"
 )
 
+type ToolParams struct {
+	Type       string                      `json:"type"`
+	Defs       any                         `json:"$defs,omitempty"`
+	Items      any                         `json:"items,omitempty"`
+	Required   []string                    `json:"required"`
+	Properties map[string]api.ToolProperty `json:"properties"`
+}
+
 func main() {
 	model := dflt.EnvString("MODEL", "qwen3:0.6b")
 	host := dflt.EnvString("OLLAMA_HOST", "http://localhost:11434")
@@ -32,13 +40,7 @@ func main() {
 		Function: api.ToolFunction{
 			Name:        "getWeather",
 			Description: "Get the weather in a given location",
-			Parameters: struct {
-				Type       string                      `json:"type"`
-				Defs       any                         `json:"$defs,omitempty"`
-				Items      any                         `json:"items,omitempty"`
-				Required   []string                    `json:"required"`
-				Properties map[string]api.ToolProperty `json:"properties"`
-			}{
+			Parameters: ToolParams{
 				Type:     "object",
 				Required: []string{"location"},
 				Properties: map[string]api.ToolProperty{
@@ -53,13 +55,7 @@ func main() {
 		Function: api.ToolFunction{
 			Name:        "getTime",
 			Description: "Returns the current time.",
-			Parameters: struct {
-				Type       string                      `json:"type"`
-				Defs       any                         `json:"$defs,omitempty"`
-				Items      any                         `json:"items,omitempty"`
-				Required   []string                    `json:"required"`
-				Properties map[string]api.ToolProperty `json:"properties"`
-			}{
+			Parameters: ToolParams{
 				Type:       "object",
 				Required:   []string{},
 				Properties: map[string]api.ToolProperty{},
