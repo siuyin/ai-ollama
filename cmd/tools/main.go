@@ -21,7 +21,8 @@ type ToolParams struct {
 func main() {
 	model := dflt.EnvString("MODEL", "qwen3:0.6b")
 	host := dflt.EnvString("OLLAMA_HOST", "http://localhost:11434")
-	log.Printf("MODEL=%s OLLAMA_HOST=%s", model, host)
+	loc := dflt.EnvString("LOC", "Bukit Batok, Singapore")
+	log.Printf("MODEL=%s OLLAMA_HOST=%s LOC=%s", model, host, loc)
 
 	client := getClient()
 
@@ -32,7 +33,7 @@ func main() {
 		},
 		{
 			Role:    "user",
-			Content: "what is the UTC time? Also get me the weather in Bukit Batok, Singapore?",
+			Content: fmt.Sprintf("what is the UTC time? Also get me the weather in %s?", loc),
 		},
 	}
 	getWeatherTool := api.Tool{
