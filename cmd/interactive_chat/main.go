@@ -13,6 +13,10 @@ import (
 )
 
 func main() {
+	model := dflt.EnvString("MODEL", "qwen3:0.6b")
+	host := dflt.EnvString("OLLAMA_HOST", "http://localhost:11434")
+	log.Printf("OLLAMA_HOST=%s MODEL=%s", host, model)
+
 	client, err := api.ClientFromEnvironment() // eg. OLLAMA_HOST=http://imac2.h:11434
 	if err != nil {
 		log.Fatal(err)
@@ -45,24 +49,29 @@ You SHOULD NOT include any other text in the response if you call a function.
   {"name":"LocalAttractions", "description":"returns a list of recommended attractions.","parameters": null },
   {"name":"Parks", "description":"returns a list of nearby parks and gardens.", "parameters": null }
 ]
-
-Hi
 `
 
 	messages := []api.Message{
-		{Role: "user", Content: systemPrompt},
+		{Role: "system", Content: systemPrompt},
 	}
 
 	ctx := context.Background()
 	req := &api.ChatRequest{
-		Model:    dflt.EnvString("AI_MODEL", "gemma3:1b"),
+		Model:    model,
 		Messages: messages,
+		Options:  map[string]any{"Temperature": 0.1},
+		//Think:    &api.ThinkValue{Value: false},
 	}
 
 	respFunc := func(resp api.ChatResponse) error {
-		s := strings.Replace(resp.Message.Content, "\n", "", -1)
-		fmt.Print(s)
-		messages = append(messages, resp.Message)
+		if len(resp.Message.ToolCalls) == 0 {
+			fmt.Print(resp.Message.Content)
+			if resp.Done {
+				messages = append(messages, resp.Message)
+			}
+			return nil
+		}
+		fmt.Printf("tool called\n")
 		return nil
 	}
 
