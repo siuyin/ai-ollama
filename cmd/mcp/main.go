@@ -65,10 +65,8 @@ func main() {
 		Messages: messages,
 		Tools:    tools,
 		Options:  map[string]any{"Temperature": 0.1},
-		//Think:    &api.ThinkValue{Value: false},
+		Think:    &api.ThinkValue{Value: false},
 	}
-
-	//fmt.Printf("%#v\n", tools)
 
 	respFunc := func(resp api.ChatResponse) error {
 		if len(resp.Message.ToolCalls) == 0 {
@@ -79,6 +77,15 @@ func main() {
 		for _, tc := range resp.Message.ToolCalls {
 			fn := tc.Function
 			log.Printf("Model wants to call tool: %s with args: %v", fn.Name, fn.Arguments)
+			toolParam := &mcp.CallToolParams{
+				Name:      fn.Name,
+				Arguments: fn.Arguments,
+			}
+			output := mcpCallTool(session, toolParam)
+			messages = append(messages, api.Message{
+				Role:    "tool",
+				Content: output,
+			})
 		}
 		return nil
 	}
@@ -104,4 +111,22 @@ func getClient() *api.Client {
 	}
 
 	return client
+}
+
+func mcpCallTool(session *mcp.ClientSession, params *mcp.CallToolParams) string {
+	ctx := context.Background()
+	res, err := session.CallTool(ctx, params)
+	if err != nil {
+		log.Fatalf("CallTool failed: %v", err)
+	}
+	if res.IsError {
+		log.Fatal("tool failed")
+	}
+	s := ""
+	for _, c := range res.Content {
+		s += c.(*mcp.TextContent).Text
+		//log.Print(c.(*mcp.TextContent).Text)
+	}
+	log.Printf("\tTool: %s called: output: %s", params.Name, s)
+	return s
 }
