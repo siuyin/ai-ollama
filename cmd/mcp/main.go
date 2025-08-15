@@ -24,7 +24,7 @@ func main() {
 	model := dflt.EnvString("MODEL", "qwen3:0.6b")
 	host := dflt.EnvString("OLLAMA_HOST", "http://localhost:11434")
 	svr := dflt.EnvString("SERVER", "myserver")
-	prompt := dflt.EnvString("PROMPT", "My name is Siu Yin.")
+	prompt := dflt.EnvString("PROMPT", "What is the UTC time.")
 	log.Printf("MODEL=%s OLLAMA_HOST=%s SERVER=%s", model, host, svr)
 
 	// Create a new mcpCl, with no features.
@@ -51,8 +51,9 @@ func main() {
 
 	messages := []api.Message{
 		{
-			Role:    "system",
-			Content: "You are a receptioninst agent. When meeting someone for the first time, say hi.",
+			Role: "system",
+			Content: `You are a professional and helpful assistant with access to tools.
+			If you do not know, say so.`,
 		},
 		{
 			Role:    "user",
