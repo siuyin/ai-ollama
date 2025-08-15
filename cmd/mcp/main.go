@@ -25,7 +25,7 @@ func main() {
 	host := dflt.EnvString("OLLAMA_HOST", "http://localhost:11434")
 	svr := dflt.EnvString("SERVER", "myserver")
 	prompt := dflt.EnvString("PROMPT", "What is the UTC time.")
-	log.Printf("MODEL=%s OLLAMA_HOST=%s SERVER=%s", model, host, svr)
+	log.Printf("MODEL=%s OLLAMA_HOST=%s SERVER=%s PROMPT=%q", model, host, svr, prompt)
 
 	// Create a new mcpCl, with no features.
 	mcpCl := mcp.NewClient(&mcp.Implementation{Name: "mcp-client", Version: "v1.0.0"}, nil)
@@ -52,7 +52,7 @@ func main() {
 	messages := []api.Message{
 		{
 			Role: "system",
-			Content: `You are a professional and helpful assistant with access to tools.
+			Content: `You are a professional assistant with access to tools.
 			If you do not know, say so.`,
 		},
 		{
