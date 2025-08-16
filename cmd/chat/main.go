@@ -10,6 +10,10 @@ import (
 )
 
 func main() {
+	host := dflt.EnvString("OLLAMA_HOST", "http://localhost:11434")
+	model := dflt.EnvString("MODEL", "gemma3:1b")
+	log.Printf("OLLAMA_HOST=%s MODEL=%s", host, model)
+
 	client, err := api.ClientFromEnvironment() // eg. OLLAMA_HOST=http://imac2.h:11434
 	if err != nil {
 		log.Fatal(err)
@@ -36,7 +40,7 @@ func main() {
 
 	ctx := context.Background()
 	req := &api.ChatRequest{
-		Model:    dflt.EnvString("AI_MODEL", "gemma3:1b"),
+		Model:    model,
 		Messages: messages,
 		Options: map[string]any{
 			"temperature": 0, "top_k": 5, "top_p": 1,
