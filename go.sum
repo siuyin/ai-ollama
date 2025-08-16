@@ -12,6 +12,8 @@ github.com/siuyin/dflt v0.0.0-20230329062002-0475f4d54412 h1:wa75y3NwGEDSzxJ0dPd
 github.com/siuyin/dflt v0.0.0-20230329062002-0475f4d54412/go.mod h1:+WsKak36sIJb+W3/mAlKWpfpWdo2y7tv3/zxu6YE9O4=
 github.com/siuyin/mcptry v0.0.0-20250814040420-1b95c017abea h1:CzMKyh9utmQwud/YDNyc1V3IRb9NORsZ3Imsrja76nU=
 github.com/siuyin/mcptry v0.0.0-20250814040420-1b95c017abea/go.mod h1:3spYjY6J7WWMb5AIFhzbZvYPdc/E0CCAPS8og0KbTko=
+github.com/siuyin/mcptry v0.0.0-20250815130042-383c6877795e h1:9fbk2Bwve74wP1SwD9P2g8cB3S427O0Fh6kpMwr0F5o=
+github.com/siuyin/mcptry v0.0.0-20250815130042-383c6877795e/go.mod h1:3spYjY6J7WWMb5AIFhzbZvYPdc/E0CCAPS8og0KbTko=
 github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
 github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
 github.com/yosida95/uritemplate/v3 v3.0.2 h1:Ed3Oyj9yrmi9087+NczuL5BwkIc4wvTb5zIM+UJPGz4=
