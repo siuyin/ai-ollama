@@ -30,10 +30,10 @@ func main() {
 			Content: fmt.Sprintf(`Based on the following user request, determine which agent or team or agents should handle it:
 User request: %s
 Available agents:
-- 'creative': Creative writing agent that writes stories, poems or other creative text.
 - 'weather' : Weather forecast agent that gets the current weather i.e. rain, wind, fog, temperature for various cities or locations.
-- 'time': Select this agent if the user request includes the word 'time'. This agent that reports the current time for various cities or locations, including UTC.
+- 'time': Select this agent if the user request includes the word 'time'. This agent reports the current time for various cities or locations, including UTC.
 - 'flight': Flight booking agent, able to answer questions on available flights, fares, airport enquiries and book flights.
+- 'creative': Creative writing agent that writes stories, poems or other creative text. Only select this agent if the user actually asks to write something.
 `, prompt),
 		},
 	}
@@ -43,7 +43,7 @@ Available agents:
 		Model:    model,
 		Messages: messages,
 		Options:  map[string]any{"temperature": 0},
-		Think:    &api.ThinkValue{Value: false},
+		//Think:    &api.ThinkValue{Value: false},
 	}
 
 	respFunc := func(resp api.ChatResponse) error {
