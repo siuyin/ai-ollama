@@ -24,7 +24,7 @@ func main() {
 		{
 			Role: "system",
 			Content: `Analyze the input below and use the following json schema for output:
-			{name: string, name_without_salutation: string, sex: string (M|F), date_of_birth: string (dd/mm/yyyy), years_of_working_experience: int, industry: string, full_text: string}`,
+			{name: string, name_without_salutation: string, sex: string (M|F), date_of_birth: string (dd/mm/yyyy), date_of_birth_iso: string (yyyy-mm-dd), years_of_working_experience: int, industry: string, full_text: string}`,
 		},
 		{
 			Role: "user",
