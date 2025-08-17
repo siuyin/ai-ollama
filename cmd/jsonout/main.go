@@ -13,7 +13,7 @@ func main() {
 	model := dflt.EnvString("MODEL", "qwen3:1.7b")
 	host := dflt.EnvString("OLLAMA_HOST", "http://localhost:8080")
 	prompt := dflt.EnvString("PROMPT", "Galpathi Golan (Ms) was born on Feb 28, 1962. She worked as a teacher at RGS for 18 years and then an education consultant for a further 21 years.")
-	log.Printf("OLLAMA_HOST=%s MODEL=%s PROMPT=%s", model, host, prompt)
+	log.Printf("OLLAMA_HOST=%s MODEL=%s PROMPT=%s", host, model, prompt)
 
 	client, err := api.ClientFromEnvironment() // eg. OLLAMA_HOST=http://imac2.h:11434
 	if err != nil {
