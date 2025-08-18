@@ -43,7 +43,7 @@ Available agents:
 		Model:    model,
 		Messages: messages,
 		Options:  map[string]any{"temperature": 0},
-		//Think:    &api.ThinkValue{Value: false},
+		Think:    &api.ThinkValue{Value: false},
 	}
 
 	respFunc := func(resp api.ChatResponse) error {

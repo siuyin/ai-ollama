@@ -46,6 +46,7 @@ func main() {
 	}
 
 	tools, _ := olamtl.FromMCP(lt.Tools)
+	listOllam(tools)
 
 	olamCl := getClient()
 
@@ -130,4 +131,12 @@ func mcpCallTool(session *mcp.ClientSession, params *mcp.CallToolParams) string 
 	}
 	log.Printf("\tTool: %s called: output: %s", params.Name, s)
 	return s
+}
+
+func listOllam(tools []api.Tool) {
+	for _, t := range tools {
+		f := t.Function
+		fmt.Printf("Name: %s, Description: %s\n\tParams: %v\n", f.Name, f.Description, f.Parameters)
+	}
+	fmt.Println()
 }
