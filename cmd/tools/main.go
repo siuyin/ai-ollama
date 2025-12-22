@@ -32,8 +32,10 @@ func main() {
 			Content: "Provide very brief, concise responses. Check all necessary tool calls have been made.",
 		},
 		{
-			Role:    "user",
-			Content: fmt.Sprintf("what is the UTC time? Also get me the weather in %s?", loc),
+			Role: "user",
+			//Content: fmt.Sprintf("what is the UTC time?"),
+			//Content: fmt.Sprintf("what is the weather in %s?", loc),
+			Content: fmt.Sprintf("1. what is the weather in %s?\n 2. What is the UTC time?", loc),
 		},
 	}
 	getWeatherTool := api.Tool{
