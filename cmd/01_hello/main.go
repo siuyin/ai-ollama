@@ -36,8 +36,9 @@ func main() {
 
 	ctx := context.Background()
 	req := &api.ChatRequest{
-		Model:    dflt.EnvString("AI_MODEL", "gemma3:1b"),
+		Model:    dflt.EnvString("AI_MODEL", "gemma3n:e2b"),
 		Messages: messages,
+		Think:    &api.ThinkValue{false},
 		// Options: map[string]any{
 		// 	"temperature": 0, "top_k": 5, "top_p": 1,
 		// 	"stop": []string{"<end_of_turn>"},
@@ -53,4 +54,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println()
 }
