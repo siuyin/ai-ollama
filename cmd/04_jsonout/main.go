@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	model := dflt.EnvString("MODEL", "qwen3:1.7b")
+	model := dflt.EnvString("MODEL", "qwen3.5:2b")
 	host := dflt.EnvString("OLLAMA_HOST", "http://localhost:8080")
 	prompt := dflt.EnvString("PROMPT", "Galpathi Golan (Ms) was born on Feb 28, 1962. She worked as a teacher at RGS for 18 years and then an education consultant for a further 21 years.")
 	log.Printf("OLLAMA_HOST=%s MODEL=%s PROMPT=%s", host, model, prompt)
