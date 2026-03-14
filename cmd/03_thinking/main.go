@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	model := dflt.EnvString("MODEL", "qwen3:0.6b")
+	model := dflt.EnvString("MODEL", "qwen3.5:0.8b")
 	log.Printf("MODEL=%s", model)
 
 	client, err := api.ClientFromEnvironment()
@@ -21,7 +21,7 @@ func main() {
 	messages := []api.Message{
 		api.Message{
 			Role:    "system",
-			Content: "Provide very brief, concise responses",
+			Content: "Do not over-think, provide very brief, concise responses",
 		},
 		api.Message{
 			Role:    "user",
@@ -37,15 +37,25 @@ func main() {
 		},
 	}
 
+	think := false
+	thinkEnv := dflt.EnvString("THINK", "false")
+	if thinkEnv != "false" {
+		think = true
+	}
+
 	ctx := context.Background()
 	req := &api.ChatRequest{
 		Model:    model,
 		Messages: messages,
-		Think:    &api.ThinkValue{Value: false},
+		Think:    &api.ThinkValue{Value: think},
 		Options:  map[string]any{"Temperature": 0.0, "Seed": 123},
 	}
 
 	respFunc := func(resp api.ChatResponse) error {
+		if resp.Message.Thinking != "" {
+			fmt.Print(resp.Message.Thinking)
+		}
+
 		fmt.Print(resp.Message.Content)
 		return nil
 	}
