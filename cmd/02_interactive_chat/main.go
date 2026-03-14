@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	model := dflt.EnvString("MODEL", "qwen3:0.6b")
+	model := dflt.EnvString("MODEL", "qwen3.5:0.8b")
 	host := dflt.EnvString("OLLAMA_HOST", "http://localhost:11434")
 	log.Printf("OLLAMA_HOST=%s MODEL=%s", host, model)
 
@@ -60,7 +60,7 @@ You SHOULD NOT include any other text in the response if you call a function.
 		Model:    model,
 		Messages: messages,
 		Options:  map[string]any{"Temperature": 0.1},
-		//Think:    &api.ThinkValue{Value: false},
+		Think:    &api.ThinkValue{Value: false},
 	}
 
 	respFunc := func(resp api.ChatResponse) error {
