@@ -19,10 +19,13 @@ type ToolParams struct {
 }
 
 func main() {
-	model := dflt.EnvString("MODEL", "qwen3:0.6b")
+	model := dflt.EnvString("MODEL", "qwen3.5:0.8b")
 	host := dflt.EnvString("OLLAMA_HOST", "http://localhost:11434")
-	loc := dflt.EnvString("LOC", "Bukit Batok, Singapore")
-	log.Printf("MODEL=%s OLLAMA_HOST=%s LOC=%s", model, host, loc)
+	thinkStr := dflt.EnvString("THINK", "false")
+	log.Printf("MODEL=%s OLLAMA_HOST=%s THINK=%s", model, host, thinkStr)
+
+	prompt := dflt.EnvString("PROMPT", "1. what is the weather in Bukit Batok, Singapore?\n 2. What is the UTC time?")
+	log.Printf("PROMPT=%q", prompt)
 
 	client := getClient()
 
@@ -35,20 +38,22 @@ func main() {
 			Role: "user",
 			//Content: fmt.Sprintf("what is the UTC time?"),
 			//Content: fmt.Sprintf("what is the weather in %s?", loc),
-			Content: fmt.Sprintf("1. what is the weather in %s?\n 2. What is the UTC time?", loc),
+			Content: prompt,
 		},
 	}
+	gwtProps := api.NewToolPropertiesMap()
+	gwtProps.Set("location", api.ToolProperty{
+		Type: []string{"string"},
+	})
 	getWeatherTool := api.Tool{
 		Type: "function",
 		Function: api.ToolFunction{
 			Name:        "getWeather",
-			Description: "Get the weather in a given location",
-			Parameters: ToolParams{
-				Type:     "object",
-				Required: []string{"location"},
-				Properties: map[string]api.ToolProperty{
-					"location": api.ToolProperty{Type: []string{"string"}},
-				},
+			Description: "Get the weather for a given location",
+			Parameters: api.ToolFunctionParameters{
+				Type:       "object",
+				Required:   []string{"location"},
+				Properties: gwtProps,
 			},
 		},
 	}
@@ -57,13 +62,17 @@ func main() {
 		Type: "function",
 		Function: api.ToolFunction{
 			Name:        "getTime",
-			Description: "Returns the current time.",
-			Parameters: ToolParams{
-				Type:       "object",
-				Required:   []string{},
-				Properties: map[string]api.ToolProperty{},
+			Description: "Get the current time in UTC.",
+			Parameters: api.ToolFunctionParameters{
+				Type:     "object",
+				Required: []string{},
 			},
 		},
+	}
+
+	think := false
+	if thinkStr != "false" {
+		think = true
 	}
 
 	req := &api.ChatRequest{
@@ -71,22 +80,20 @@ func main() {
 		Messages: messages,
 		Tools:    []api.Tool{getWeatherTool, getTimeTool},
 		Options:  map[string]any{"Temperature": 0.1},
-		Think:    &api.ThinkValue{Value: false},
+		Think:    &api.ThinkValue{Value: think},
 	}
 
 	respFunc := func(resp api.ChatResponse) error {
-		if len(resp.Message.ToolCalls) == 0 {
-			fmt.Print(resp.Message.Content)
-			return nil
-		}
-
 		for _, tc := range resp.Message.ToolCalls {
 			fn := tc.Function
-			log.Printf("Model wants to call tool: %s with args: %v", fn.Name, fn.Arguments)
+			log.Printf("Model wants to call tool: %s with args %v", fn.Name, dump(fn.Arguments))
 			switch fn.Name {
 			case "getWeather":
-				loc := fn.Arguments["location"].(string)
-				output, err := getWeather(loc)
+				loc, ok := fn.Arguments.Get("location")
+				if !ok {
+					log.Fatal("error geting location")
+				}
+				output, err := getWeather(loc.(string))
 				if err != nil {
 					log.Fatalf("error executing tool: %v", err)
 				}
@@ -106,6 +113,10 @@ func main() {
 				log.Fatalf("invalid function: %q", fn.Name)
 			}
 		}
+
+		fmt.Print(resp.Message.Thinking)
+		fmt.Print(resp.Message.Content)
+
 		return nil
 	}
 
@@ -143,4 +154,12 @@ func getTime() string {
 	res := time.Now().UTC().Format("15:04:05 UTC")
 	log.Printf("\tTool: getTime called. resp: %s", res)
 	return res
+}
+
+func dump(args api.ToolCallFunctionArguments) []string {
+	ret := []string{}
+	for _, arg := range args.All() {
+		ret = append(ret, arg.(string))
+	}
+	return ret
 }
