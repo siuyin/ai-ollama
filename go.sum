@@ -19,8 +19,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/siuyin/dflt v0.0.0-20230329062002-0475f4d54412 h1:wa75y3NwGEDSzxJ0dPdIadS0hCA4Jbq0m1RZoksrHR8=
 github.com/siuyin/dflt v0.0.0-20230329062002-0475f4d54412/go.mod h1:+WsKak36sIJb+W3/mAlKWpfpWdo2y7tv3/zxu6YE9O4=
-github.com/siuyin/mcptry v0.0.0-20250815130042-383c6877795e h1:9fbk2Bwve74wP1SwD9P2g8cB3S427O0Fh6kpMwr0F5o=
-github.com/siuyin/mcptry v0.0.0-20250815130042-383c6877795e/go.mod h1:3spYjY6J7WWMb5AIFhzbZvYPdc/E0CCAPS8og0KbTko=
+github.com/siuyin/mcptry v0.0.0-20260318014708-a25eb13930e1 h1:ENKImUoE8CJhcxRcUm1aF/SrMg1Hzgjle/rcwnamEJM=
+github.com/siuyin/mcptry v0.0.0-20260318014708-a25eb13930e1/go.mod h1:Nsjf1L3t4xC/1+v5pYFxk3G+EfvydtDsM6an0qJOT3E=
 github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
 github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
 github.com/wk8/go-ordered-map/v2 v2.1.8 h1:5h/BUHu93oj4gIdvHHHGsScSTMijfx5PeYkE/fJgbpc=

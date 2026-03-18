@@ -12,16 +12,8 @@ import (
 	"github.com/siuyin/mcptry/olamtl"
 )
 
-type ToolParams struct {
-	Type       string                      `json:"type"`
-	Defs       any                         `json:"$defs,omitempty"`
-	Items      any                         `json:"items,omitempty"`
-	Required   []string                    `json:"required"`
-	Properties map[string]api.ToolProperty `json:"properties"`
-}
-
 func main() {
-	model := dflt.EnvString("MODEL", "qwen3:0.6b")
+	model := dflt.EnvString("MODEL", "qwen3.5:2b")
 	host := dflt.EnvString("OLLAMA_HOST", "http://localhost:11434")
 	svr := dflt.EnvString("SERVER", "myserver")
 	prompt := dflt.EnvString("PROMPT", "What is the UTC time.")
@@ -45,7 +37,11 @@ func main() {
 		log.Fatal("list tools: ", err)
 	}
 
-	tools, _ := olamtl.FromMCP(lt.Tools)
+	tools, err := olamtl.FromMCP(lt.Tools)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	listOllam(tools)
 
 	olamCl := getClient()
@@ -71,14 +67,9 @@ func main() {
 	}
 
 	respFunc := func(resp api.ChatResponse) error {
-		if len(resp.Message.ToolCalls) == 0 {
-			fmt.Print(resp.Message.Content)
-			return nil
-		}
-
 		for _, tc := range resp.Message.ToolCalls {
 			fn := tc.Function
-			log.Printf("Model wants to call tool: %s with args: %v", fn.Name, fn.Arguments)
+			log.Printf("Model wants to call tool: %s with args: %v", fn.Name, dumpFuncArgs(fn.Arguments))
 			toolParam := &mcp.CallToolParams{
 				Name:      fn.Name,
 				Arguments: fn.Arguments,
@@ -89,6 +80,7 @@ func main() {
 				Content: output,
 			})
 		}
+		fmt.Print(resp.Message.Content)
 		return nil
 	}
 
@@ -136,7 +128,26 @@ func mcpCallTool(session *mcp.ClientSession, params *mcp.CallToolParams) string 
 func listOllam(tools []api.Tool) {
 	for _, t := range tools {
 		f := t.Function
-		fmt.Printf("Name: %s, Description: %s\n\tParams: %v\n", f.Name, f.Description, f.Parameters)
+
+		fmt.Printf("Name: %s, Description: %s\n\tParamsType: %v Properties: %v\n",
+			f.Name, f.Description, f.Parameters.Type, dump(f.Parameters.Properties))
 	}
 	fmt.Println()
+}
+
+func dump(tpm *api.ToolPropertiesMap) []string {
+	ret := []string{}
+	for str, prop := range tpm.All() {
+		ret = append(ret, fmt.Sprintf("%s: %s", str, prop.Type))
+	}
+
+	return ret
+}
+
+func dumpFuncArgs(args api.ToolCallFunctionArguments) []string {
+	ret := []string{}
+	for _, arg := range args.All() {
+		ret = append(ret, arg.(string))
+	}
+	return ret
 }

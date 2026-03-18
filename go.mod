@@ -6,7 +6,7 @@ require (
 	github.com/modelcontextprotocol/go-sdk v0.2.0
 	github.com/ollama/ollama v0.18.0
 	github.com/siuyin/dflt v0.0.0-20230329062002-0475f4d54412
-	github.com/siuyin/mcptry v0.0.0-20250815130042-383c6877795e
+	github.com/siuyin/mcptry v0.0.0-20260318014708-a25eb13930e1
 	github.com/yuin/goldmark v1.7.8
 )
 
