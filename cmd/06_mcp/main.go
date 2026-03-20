@@ -25,8 +25,8 @@ func main() {
 
 	ctx := context.Background()
 	// Connect to a server over stdin/stdout
-	transport := mcp.NewCommandTransport(exec.Command(svr))
-	session, err := mcpCl.Connect(ctx, transport)
+	transport := &mcp.CommandTransport{Command: exec.Command(svr)}
+	session, err := mcpCl.Connect(ctx, transport, nil)
 	if err != nil {
 		log.Fatal("connect: ", err)
 	}
