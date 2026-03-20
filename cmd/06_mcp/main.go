@@ -17,7 +17,8 @@ func main() {
 	host := dflt.EnvString("OLLAMA_HOST", "http://localhost:11434")
 	svr := dflt.EnvString("SERVER", "myserver")
 	prompt := dflt.EnvString("PROMPT", "What is the UTC time.")
-	log.Printf("MODEL=%s OLLAMA_HOST=%s SERVER=%s PROMPT=%q", model, host, svr, prompt)
+	thinkStr := dflt.EnvString("THINK", "false")
+	log.Printf("MODEL=%s OLLAMA_HOST=%s THINK=%s SERVER=%s PROMPT=%q", model, host, thinkStr, svr, prompt)
 
 	// Create a new mcpCl, with no features.
 	mcpCl := mcp.NewClient(&mcp.Implementation{Name: "mcp-client", Version: "v1.0.0"}, nil)
@@ -58,12 +59,16 @@ func main() {
 		},
 	}
 
+	think := false
+	if thinkStr != "false" {
+		think = true
+	}
 	req := &api.ChatRequest{
 		Model:    model,
 		Messages: messages,
 		Tools:    tools,
 		Options:  map[string]any{"Temperature": 0.1},
-		Think:    &api.ThinkValue{Value: false},
+		Think:    &api.ThinkValue{Value: think},
 	}
 
 	respFunc := func(resp api.ChatResponse) error {
